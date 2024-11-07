@@ -44,12 +44,12 @@ pipeline {
             }
         }
     }
-    
-    post {
-        always {
-            // Clean up Docker resources (optional)
-            echo 'Cleaning up Docker containers...'
-            sh 'docker ps -a'
+       stage('Cleanup Docker Containers') {
+          steps {
+          script {
+            sh 'docker ps -a -q --filter "name=node-app-container" | xargs --no-run-if-empty docker rm -f'
         }
     }
 }
+
+    
