@@ -52,6 +52,14 @@ pipeline {
                 }
             }
         }
+post {
+    always {
+        echo 'Pipeline finished'
+        echo 'Listing docker containers:'
+        sh 'docker ps -a'
+    }
+}
+
     }
 
     post {
