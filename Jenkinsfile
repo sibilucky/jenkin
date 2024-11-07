@@ -1,6 +1,6 @@
 pipeline {
     agent any  // Run on any available Jenkins agent
-
+    
     environment {
         IMAGE_NAME = 'node-app'  // Name of the Docker image
         CONTAINER_NAME = 'node-app-container'  // Name of the container
@@ -43,14 +43,22 @@ pipeline {
                 sh 'docker rm node-app-container'
             }
         }
+
+        stage('Cleanup Docker Containers') {
+            steps {
+                script {
+                    // Clean up any existing containers if needed
+                    sh 'docker ps -a -q --filter "name=node-app-container" | xargs --no-run-if-empty docker rm -f'
+                }
+            }
+        }
     }
-       stage('Cleanup Docker Containers') {
-          steps {
-          script {
-            sh 'docker ps -a -q --filter "name=node-app-container" | xargs --no-run-if-empty docker rm -f'
+
+    post {
+        always {
+            // Clean up Docker resources (optional)
+            echo 'Cleaning up Docker containers...'
+            sh 'docker ps -a'
         }
     }
 }
-}
-
-    
