@@ -52,16 +52,9 @@ pipeline {
                 }
             }
         }
-post {
-    always {
-        echo 'Pipeline finished'
-        echo 'Listing docker containers:'
-        sh 'docker ps -a'
-    }
-}
-
     }
 
+    // The post block should be here, outside the stages block
     post {
         always {
             // Clean up Docker resources (optional)
