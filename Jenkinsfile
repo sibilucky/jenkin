@@ -59,7 +59,7 @@ pipeline {
         always {
             // Clean up Docker resources (optional)
             echo 'Cleaning up Docker containers...'
-            sh 'docker ps -a'
+            
         }
     }
 }
