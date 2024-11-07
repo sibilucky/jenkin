@@ -10,7 +10,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from GitHub repository
-                git 'https://github.com/sibilucky/jenkin.git'  // Replace with your repo URL
+                 git branch: 'main', url: 'https://github.com/sibilucky/jenkin.git'
+                // Replace with your repo URL
             }
         }
         
