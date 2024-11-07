@@ -1,18 +1,27 @@
-# Use the official Node.js image
-FROM node:16
+# Use the official Jenkins LTS image
+FROM jenkins/jenkins:lts
 
-# Set the working directory inside the container
-WORKDIR /app
+# Set user to root to install dependencies
+USER root
 
-# Copy the package.json and install dependencies
-COPY package*.json ./
-RUN npm install
+# Install Node.js, npm, and other necessary tools
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    gnupg \
+    lsb-release \
+    ca-certificates && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean
 
-# Copy the rest of the application code into the container
-COPY . .
+# Install Docker inside the Jenkins container (optional for building Docker images)
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
+    sh get-docker.sh && \
+    apt-get clean
 
-# Expose the application port (e.g., 3000)
-EXPOSE 3000
+# Set user back to Jenkins user
+USER jenkins
 
-# Command to run your app
-CMD ["npm", "start"]
+# Install Docker Client (so Jenkins can use Docker commands)
+RUN sudo usermod -aG docker jenkins
