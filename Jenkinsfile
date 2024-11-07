@@ -1,29 +1,48 @@
 pipeline {
-    agent any
+    agent any  // Run on any available Jenkins agent
     
+    environment {
+        IMAGE_NAME = 'node-app'  // Name of the Docker image
+        CONTAINER_NAME = 'node-app-container'  // Name of the container
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/sibilucky/jenkin.git'
+                // Checkout the code from GitHub repository
+                git 'https://github.com/sibilucky/jenkin.git'  // Replace with your repo URL
             }
         }
-
-        stage('Build') {
+        
+        stage('Build Docker Image') {
             steps {
-                sh './build.sh'
+                // Build the Docker image from the Dockerfile
+                sh 'docker build -t node-app .'
             }
         }
-
-        stage('Test') {
+        
+        stage('Run Docker Container') {
             steps {
-                sh './test.sh'
+                // Run the Docker container from the built image
+                sh 'docker run -d -p 3000:3000 --name node-app-container node-app'
+            }
+        }
+        
+        stage('Stop Docker Container') {
+            steps {
+                // Stop the Docker container after the build
+                sh 'docker stop node-app-container'
+                sh 'docker rm node-app-container'
             }
         }
     }
     
     post {
-        success {
-            echo 'Pipeline executed successfully!'
+        always {
+            // Clean up Docker resources (optional)
+            echo 'Cleaning up Docker containers...'
+            sh 'docker ps -a'
         }
     }
 }
+
